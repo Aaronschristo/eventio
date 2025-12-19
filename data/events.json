@@ -1,0 +1,54 @@
+[
+  {
+    "id": 1,
+    "title": "Inter-College Hackathon 2024",
+    "date": "2024-03-15",
+    "organizer": "Tech Club, IIT",
+    "category": "Tech",
+    "image": "assets/event-placeholder.png",
+    "description": "Join us for 24 hours of coding, innovation, and fun. Build solutions for real-world problems and win exciting prizes. Food and drinks provided!",
+    "venue": "Main Auditorium, Block A",
+    "time": "10:00 AM - 10:00 AM (Next Day)",
+    "googleFormLink": "https://forms.google.com/example-hackathon",
+    "registrationStatus": "Open"
+  },
+  {
+    "id": 2,
+    "title": "Cultural Fest 'Aarambh'",
+    "date": "2024-04-02",
+    "organizer": "Student Council",
+    "category": "Cultural",
+    "image": "assets/event-placeholder.png",
+    "description": "The biggest cultural extravangza of the year. Music, Dance, Drama, and Fashion Show. Don't miss the star night performance!",
+    "venue": "College Ground",
+    "time": "5:00 PM Onwards",
+    "googleFormLink": "https://forms.google.com/example-fest",
+    "registrationStatus": "Coming Soon"
+  },
+  {
+    "id": 3,
+    "title": "AI & ML Workshop",
+    "date": "2024-03-20",
+    "organizer": "CS Department",
+    "category": "Workshop",
+    "image": "assets/event-placeholder.png",
+    "description": "A hands-on workshop on Artificial Intelligence and Machine Learning. Learn to build your first neural network.",
+    "venue": "Lab 3, CS Block",
+    "time": "2:00 PM - 5:00 PM",
+    "googleFormLink": "https://forms.google.com/example-ai",
+    "registrationStatus": "Open"
+  },
+  {
+    "id": 1766109488203,
+    "title": "dfdfd",
+    "organizer": "ddddddd",
+    "date": "2025-12-12",
+    "category": "Tech",
+    "time": "dddddd",
+    "venue": "ddddd",
+    "image": "",
+    "description": "",
+    "googleFormLink": "",
+    "registrationStatus": "Open"
+  }
+]

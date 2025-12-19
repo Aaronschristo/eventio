@@ -1,96 +1,16 @@
-/* Mock Data */
-const events = [
-    {
-        id: 1,
-        title: "Inter-College Hackathon 2024",
-        date: "2024-03-15",
-        organizer: "Tech Club, IIT",
-        category: "Tech",
-        image: "assets/event-placeholder.png",
-        description: "Join us for 24 hours of coding, innovation, and fun. Build solutions for real-world problems and win exciting prizes. Food and drinks provided!",
-        venue: "Main Auditorium, Block A",
-        time: "10:00 AM - 10:00 AM (Next Day)",
-        googleFormLink: "https://forms.google.com/example-hackathon",
-        registrationStatus: "Open"
-    },
-    {
-        id: 2,
-        title: "Cultural Fest 'Aarambh'",
-        date: "2024-04-02",
-        organizer: "Student Council",
-        category: "Cultural",
-        image: "assets/event-placeholder.png",
-        description: "The biggest cultural extravangza of the year. Music, Dance, Drama, and Fashion Show. Don't miss the star night performance!",
-        venue: "College Ground",
-        time: "5:00 PM Onwards",
-        googleFormLink: "https://forms.google.com/example-fest",
-        registrationStatus: "Coming Soon"
-    },
-    {
-        id: 3,
-        title: "AI & ML Workshop",
-        date: "2024-03-20",
-        organizer: "CS Department",
-        category: "Workshop",
-        image: "assets/event-placeholder.png",
-        description: "A hands-on workshop on Artificial Intelligence and Machine Learning. Learn to build your first neural network.",
-        venue: "Lab 3, CS Block",
-        time: "2:00 PM - 5:00 PM",
-        googleFormLink: "https://forms.google.com/example-ai",
-        registrationStatus: "Open"
-    },
-    {
-        id: 4,
-        title: "Robotics Expo",
-        date: "2024-03-25",
-        organizer: "Robotics Society",
-        category: "Tech",
-        image: "assets/event-placeholder.png",
-        description: "Showcase of the latest robotics projects by students. Drone racing, bot wars, and more.",
-        venue: "Indoor Stadium",
-        time: "10:00 AM - 4:00 PM",
-        googleFormLink: "https://forms.google.com/example-robotics",
-        registrationStatus: "Open"
-    },
-    {
-        id: 5,
-        title: "Music Night",
-        date: "2024-04-10",
-        organizer: "Music Club",
-        category: "Cultural",
-        image: "assets/event-placeholder.png",
-        description: "An evening of soulful melodies and rock beats. Featuring the college band 'Decibels'.",
-        venue: "Open Air Theatre",
-        time: "6:00 PM - 9:00 PM",
-        googleFormLink: "https://forms.google.com/example-music",
-        registrationStatus: "Coming Soon"
-    },
-    {
-        id: 6,
-        title: "Startup Summit",
-        date: "2024-05-05",
-        organizer: "E-Cell",
-        category: "Workshop",
-        image: "assets/event-placeholder.png",
-        description: "Meet successful entrepreneurs and learn how to pitch your startup idea. Networking session included.",
-        venue: "Seminar Hall",
-        time: "11:00 AM - 3:00 PM",
-        googleFormLink: "https://forms.google.com/example-startup",
-        registrationStatus: "Open"
-    }
-];
-
 /* State */
+let events = [];
 let isLoggedIn = false;
 let user = null;
+
+const API_URL = 'http://localhost:3000/api';
 
 /* DOM Elements */
 const eventFeed = document.getElementById('eventFeed');
 const eventDetail = document.getElementById('eventDetail');
 const themeToggle = document.getElementById('themeToggle');
 const html = document.documentElement;
-const filterButtons = document.querySelectorAll('.filter hero-content-btn'); // Typo fix: selector might be wrong in my mind, checking HTML... it was .filter-btn
-const filterContainer = document.querySelector('.filter-container'); // Use container for delegation or re-select
+const filterContainer = document.querySelector('.filter-container');
 const createEventBtn = document.getElementById('createEventBtn');
 const authBtn = document.getElementById('authBtn');
 const createModal = document.getElementById('createModal');
@@ -101,11 +21,23 @@ const backBtn = document.getElementById('backBtn');
 
 /* Initialization */
 document.addEventListener('DOMContentLoaded', () => {
-    renderEvents(events);
+    fetchEvents();
     checkTheme();
 });
 
 /* Functions */
+
+// Fetch Events from Backend
+async function fetchEvents() {
+    try {
+        const response = await fetch(`${API_URL}/events`);
+        events = await response.json();
+        renderEvents(events);
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        eventFeed.innerHTML = '<p class="no-events">Failed to load events. Is the server running?</p>';
+    }
+}
 
 // Render Events
 function renderEvents(data) {
@@ -119,19 +51,10 @@ function renderEvents(data) {
     data.forEach(event => {
         const card = document.createElement('div');
         card.className = 'event-card';
-        card.onclick = (e) => {
-            // Prevent triggering if clicking a button (though we might remove button actions on card if card clicks open detail)
-            // Actually, let's allow button to be "Register" (quick action? or just detail?)
-            // Requirement: "Register button" on card.
-            // Let's make the Register button open Detail too for now, or maybe the card click does.
-            // If checking event.target to see if it was the button...
-            showEventDetail(event.id);
-        };
-
-        const statusClass = event.registrationStatus === 'Open' ? 'status-open-text' : 'status-closed-text'; // Just for text color maybe?
+        card.onclick = () => showEventDetail(event._id || event.id);
 
         card.innerHTML = `
-            <img src="${event.image}" alt="${event.title}" class="card-image" onerror="this.src='https://via.placeholder.com/300x180?text=Event'">
+            <img src="${event.image || 'assets/event-placeholder.png'}" alt="${event.title}" class="card-image" onerror="this.src='https://via.placeholder.com/300x180?text=Event'">
             <div class="card-content">
                 <div class="card-meta">
                     <span class="card-date">${formatDate(event.date)}</span>
@@ -140,8 +63,7 @@ function renderEvents(data) {
                 <h3 class="card-title">${event.title}</h3>
                 <p class="card-organizer">${event.organizer}</p>
                 <div class="card-actions">
-                    <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); showEventDetail(${event.id})">View Details</button>
-                    <!-- <button class="btn btn-secondary btn-sm">Register</button> -->
+                    <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); showEventDetail('${event._id || event.id}')">View Details</button>
                 </div>
             </div>
         `;
@@ -156,43 +78,45 @@ function formatDate(dateString) {
 
 // Show Event Detail
 function showEventDetail(id) {
-    const event = events.find(e => e.id === id);
+    const event = events.find(e => (e._id || e.id) == id);
     if (!event) return;
 
-    // Populate Data
-    document.getElementById('detailImage').src = event.image;
+    document.getElementById('detailImage').src = event.image || 'assets/event-placeholder.png';
     document.getElementById('detailTitle').textContent = event.title;
     document.getElementById('detailOrganizer').textContent = event.organizer;
-    document.getElementById('detailDate').textContent = formatDate(event.date); // Maybe full date?
-    document.getElementById('detailDescription').textContent = event.description;
-    document.getElementById('detailVenue').textContent = event.venue;
-    document.getElementById('detailTime').textContent = event.time;
-    document.getElementById('detailLink').href = event.googleFormLink;
+    document.getElementById('detailDate').textContent = formatDate(event.date);
+    document.getElementById('detailDescription').textContent = event.description || 'No description available.';
+    document.getElementById('detailVenue').textContent = event.venue || 'TBA';
+    document.getElementById('detailTime').textContent = event.time || 'TBA';
+    document.getElementById('detailLink').href = event.googleFormLink || '#';
 
     const statusEl = document.getElementById('detailStatus');
-    statusEl.textContent = event.registrationStatus;
-    statusEl.className = 'badge-status ' + (event.registrationStatus === 'Open' ? 'status-open' : 'status-closed');
+    statusEl.textContent = event.registrationStatus || 'Open';
+    statusEl.className = 'badge-status ' + ((event.registrationStatus || 'Open') === 'Open' ? 'status-open' : 'status-closed');
 
-    // Update Link Button
     const linkBtn = document.getElementById('detailLink');
-    if (event.registrationStatus !== 'Open') {
-        linkBtn.classList.add('disabled'); // Add style for this if needed, or just change text
-        linkBtn.textContent = 'Registration Closed / Coming Soon';
-        linkBtn.style.opacity = '0.6';
-        linkBtn.style.pointerEvents = 'none';
+    const actionsContainer = document.querySelector('.detail-actions');
+    if (!event.googleFormLink) {
+        actionsContainer.classList.add('hidden');
     } else {
-        linkBtn.textContent = 'Register Now (Google Form)';
-        linkBtn.style.opacity = '1';
-        linkBtn.style.pointerEvents = 'auto';
+        actionsContainer.classList.remove('hidden');
+        if (event.registrationStatus !== 'Open' && event.registrationStatus) {
+            linkBtn.classList.add('disabled');
+            linkBtn.textContent = 'Registration Closed / Coming Soon';
+            linkBtn.style.opacity = '0.6';
+            linkBtn.style.pointerEvents = 'none';
+        } else {
+            linkBtn.textContent = 'Register Now (Google Form)';
+            linkBtn.style.opacity = '1';
+            linkBtn.style.pointerEvents = 'auto';
+            linkBtn.classList.remove('disabled');
+        }
     }
 
-    // Toggle Views
     document.getElementById('hero').classList.add('hidden');
     document.querySelector('.filter-container').classList.add('hidden');
     eventFeed.classList.add('hidden');
     eventDetail.classList.remove('hidden');
-
-    // Scroll to top
     window.scrollTo(0, 0);
 }
 
@@ -205,7 +129,6 @@ backBtn.addEventListener('click', () => {
 });
 
 // Filter Logic
-// Re-select filter buttons properly
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -281,7 +204,6 @@ window.addEventListener('click', (e) => {
 });
 
 /* Authentication Logic */
-// Gatekeeping Create Event
 createEventBtn.addEventListener('click', () => {
     if (!isLoggedIn) {
         openModal('authModal');
@@ -298,17 +220,26 @@ authBtn.addEventListener('click', () => {
     }
 });
 
-// Mock Login (Email)
-document.getElementById('authForm').addEventListener('submit', (e) => {
+document.getElementById('authForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value;
-    // Simulate Login
-    login(email);
+
+    try {
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        const data = await response.json();
+        if (data.success) {
+            login(data.user);
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+    }
 });
 
-// Mock Login (Google)
 document.getElementById('googleAuthBtn').addEventListener('click', () => {
-    // Simulate API delay
     const btn = document.getElementById('googleAuthBtn');
     const originalText = btn.innerHTML;
     btn.innerHTML = 'Signing in...';
@@ -325,19 +256,18 @@ function login(email) {
     authBtn.textContent = 'Logout';
     createEventBtn.textContent = 'Create Event';
     closeModal('authModal');
-    console.log(`User Logged in: ${email}`);
     alert(`Successfully logged in as ${email}`);
 }
 
 function logout() {
+    isLoggedIn = true; // Wait, logout should set to false
     isLoggedIn = false;
     user = null;
     authBtn.textContent = 'Login';
-    console.log('User logged out');
 }
 
 /* Event Creation */
-document.getElementById('createEventForm').addEventListener('submit', (e) => {
+document.getElementById('createEventForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const newEvent = {
@@ -345,13 +275,26 @@ document.getElementById('createEventForm').addEventListener('submit', (e) => {
         organizer: document.getElementById('eventOrganizer').value,
         date: document.getElementById('eventDate').value,
         category: document.getElementById('eventCategory').value,
-        status: "Open" // Default
+        time: document.getElementById('eventTime').value,
+        venue: document.getElementById('eventVenue').value,
+        image: document.getElementById('eventImage').value,
+        description: document.getElementById('eventDescription').value,
+        googleFormLink: document.getElementById('eventLink').value
     };
 
-    console.log("New Event Created:", newEvent);
-    alert("Event Created! (Check Console)");
-    closeModal('createModal');
-    e.target.reset();
+    try {
+        const response = await fetch(`${API_URL}/events`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newEvent)
+        });
+        if (response.ok) {
+            alert("Event Created!");
+            closeModal('createModal');
+            e.target.reset();
+            fetchEvents(); // Refresh list
+        }
+    } catch (error) {
+        console.error('Error creating event:', error);
+    }
 });
-
-// Legacy register function removed in favor of Detail View

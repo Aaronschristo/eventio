@@ -142,29 +142,58 @@
         <div class="modal-content">
             <span class="close-btn" data-target="createModal">&times;</span>
             <h2>Create New Event</h2>
-            <form id="createEventForm">
-                <div class="form-group">
-                    <label for="eventName">Event Name</label>
-                    <input type="text" id="eventName" required>
-                </div>
-                <div class="form-group">
-                    <label for="eventOrganizer">Organizer (Club/Dept)</label>
-                    <input type="text" id="eventOrganizer" required>
-                </div>
-                <div class="form-group">
-                    <label for="eventDate">Date</label>
-                    <input type="date" id="eventDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="eventCategory">Category</label>
-                    <select id="eventCategory">
-                        <option value="Tech">Tech</option>
-                        <option value="Cultural">Cultural</option>
-                        <option value="Workshop">Workshop</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary full-width">Publish Event</button>
-            </form>
+            <div class="modal-scroll-area">
+                <form id="createEventForm">
+                    <div class="form-group">
+                        <label for="eventName">Event Name</label>
+                        <input type="text" id="eventName" placeholder="e.g. Hackathon 2024" required>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="eventOrganizer">Organizer (Club/Dept)</label>
+                            <input type="text" id="eventOrganizer" placeholder="e.g. Tech Club" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventCategory">Category</label>
+                            <select id="eventCategory">
+                                <option value="Tech">Tech</option>
+                                <option value="Cultural">Cultural</option>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Sports">Sports</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="eventDate">Date</label>
+                            <input type="date" id="eventDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventTime">Time</label>
+                            <input type="text" id="eventTime" placeholder="e.g. 10:00 AM - 5:00 PM">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventVenue">Venue</label>
+                        <input type="text" id="eventVenue" placeholder="e.g. Main Auditorium">
+                    </div>
+                    <div class="form-group">
+                        <label for="eventImage">Image URL (Poster)</label>
+                        <input type="url" id="eventImage" placeholder="https://example.com/poster.jpg">
+                    </div>
+                    <div class="form-group">
+                        <label for="eventDescription">Description</label>
+                        <textarea id="eventDescription" rows="4"
+                            placeholder="Tell us more about the event..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventLink">Registration Link (Google Form)</label>
+                        <input type="url" id="eventLink" placeholder="https://forms.gle/...">
+                    </div>
+                    <button type="submit" class="btn btn-primary full-width">Publish Event</button>
+                </form>
+            </div>
         </div>
     </div>
 
